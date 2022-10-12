@@ -42,64 +42,29 @@ const connection = mysql.createConnection({
 });
 connection.connect();
 
-const create_db = () => {
-    var url = "mongodb://localhost:27017/mydb";
-
-    MongoClient.connect(url, function(err, db) {
-    if (err) throw err;
-    console.log("Database created!");
-    db.close();
-    });
-
-    var url = "mongodb://localhost:27017/";
-    MongoClient.connect(url, function(err, db) {
-        if (err) throw err;
-        var dbo = db.db("mydb");
-        dbo.createCollection("weather", function(err, res) {
-        if (err) throw err;
-        console.log("Collection created!");
-        db.close();
-        });
-    });
-}
 
 
 const data_to_db = (new_date, data, db) => {
-    var dbo = db.db("mydb");
-    var myobj = [
-        {'datetime': new_date, 'temp': data.temp}
-    ];
-    dbo.collection("weather").insertMany(myobj, function(err, res) {
-        if (err) throw err;
-        console.log("Number of documents inserted: " + res.insertedCount);
-        db.close();
- 
-    });
+    mycursor = connection.cursor()
+
+    sql = "INSERT INTO weather (datetime, temp) VALUES (%s, %s)"
+    val = (new_date, data.temp)
+    mycursor.execute(sql, val)
+
+    mydb.commit()
+
+    print(mycursor.rowcount, "record inserted.")
 }
 const insert_data = (data) => {
-    MongoClient.connect(url, function(err, db) {
     if (err) throw err;
     if (data.time != null && data.date != null) {
         let date = data.date.split('-')
         let time = data.time.split(':')
         let new_date = new Date((date[0], date[1], date[2], time[0], time[1]))
-        data_to_db(new_date, data, db)
+        data_to_db(new_date, data)
     } else {
         let new_date = new Date.now()
-        data_to_db(new_date, data, db)
+        data_to_db(new_date, data)
     }
-});
-
 };
 
-const list_db = () => {
-    MongoClient.connect(url, function(err, db) {
-        if (err) throw err;
-        var dbo = db.db("mydb");
-        dbo.collection("weather").find({}, { projection: { _id: 0, temp: 1, datetime: 1 } }).toArray(function(err, result) {
-          if (err) throw err;
-          console.log(result);
-          db.close();
-        });
-      });
-}
