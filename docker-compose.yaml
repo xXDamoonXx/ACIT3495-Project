@@ -37,6 +37,7 @@ services:
   node:
     build:
       context: ./node
+    command: nodemon app.js
     depends_on:
       redis:
         condition: service_healthy 
@@ -52,21 +53,18 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: 'Password'
     volumes:
       - "./healthchecks:/healthchecks"
-    healthcheck:
-      test: /healthchecks/redis.sh
-      interval: "5s"
     ports: ["27017"]
     networks:
-      - back-tier
+    - back-tier
 
   mysql:
     image: damoun1380/mysql-project:latest
     environment:
       MYSQL_USER: "mainUser"
       MYSQL_PASSWORD: "Password"
-   ports:
-    - 3306:3306
-
+    ports: ["3306"]
+    networks:
+      - back-tier
 
 volumes:
   db-data:
