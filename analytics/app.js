@@ -16,7 +16,7 @@ var url = "mongodb://localhost:27017/";
 const data_to_db = (data, stats, db) => {
   var dbo = db.db("mydb");
   var myobj = [
-      {'datetime': data.date, 
+      {'date': data.date, 
       "temp_avg": stats[0], 
       "temp_low": stats[1],
       "temp_high": stats[2], 
