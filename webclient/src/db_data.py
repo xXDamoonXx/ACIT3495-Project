@@ -1,7 +1,9 @@
 from datetime import datetime as dtg
 
 date = dtg.date(dtg.today())
-data = {'datetime': f'{date}', 
+data = {
+    'data': {
+        'datetime': f'{date}', 
         'temp_avg' : 22.2, 
         'temp_high': 26.1, 
         'temp_low' : 18.4, 
@@ -33,13 +35,18 @@ data = {'datetime': f'{date}',
             '24:00': 18.2
             }
         }
+    }
+
+
+def call_db(client):
+    db = client["temps"]
+    collection = db["temp_data"]
+    
+    return collection
 
 def init_db(client):
-    # Create database 'temp_data'
-    db = client["temperatures"]
-    # Create table temp_range
-    collection = db["temp_range"]
-    # Insert data into table
-    collection.insert_one({'data': data})
-    # Return data instance
+    db = client["temps"]
+    collection = db["temp_data"]
+    collection.insert_one(data)
+
     return collection
