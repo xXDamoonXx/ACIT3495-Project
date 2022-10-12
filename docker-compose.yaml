@@ -45,14 +45,17 @@ services:
     networks:
       - back-tier
 
-  redis:
-    image: redis:5.0-alpine3.10
+  mongodb:
+    image: damoun1380/mongo:latest
+    environment:
+      MONGO_INITDB_USERNAME: 'mongoUser'
+      MONGO_INITDB_ROOT_PASSWORD: 'Password'
     volumes:
       - "./healthchecks:/healthchecks"
     healthcheck:
       test: /healthchecks/redis.sh
       interval: "5s"
-    ports: ["6379"]
+    ports: ["27017"]
     networks:
       - back-tier
 
@@ -63,17 +66,6 @@ services:
       MYSQL_PASSWORD: "Password"
    ports:
     - 3306:3306
-
-
-  mongodb:
-	  image: damoun1380/mongo:latest
-	  environment:
-      MONGO_INITDB_USERNAME: 'mongoUser'
-      MONGO_INITDB_ROOT_PASSWORD: 'Password'
-    ports:
-      - 27017:27017
-  
-		
 
 
 volumes:
